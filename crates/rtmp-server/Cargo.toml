@@ -1,0 +1,10 @@
+[package]
+name = "rtmp-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rml_rtmp = "0.8"
+tokio = { workspace = true }
+bytes = { workspace = true }
+tracing = { workspace = true }

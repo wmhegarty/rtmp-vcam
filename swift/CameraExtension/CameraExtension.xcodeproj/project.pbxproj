@@ -1,0 +1,446 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		/* Host App */
+		AA000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001 /* AppDelegate.swift */; };
+		AA000005 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000005 /* main.swift */; };
+		AA000002 /* SystemExtensions.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC000001 /* SystemExtensions.framework */; };
+		AA000003 /* CameraExtension.appex in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = DD000010 /* CameraExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+
+		/* Camera Extension */
+		AA000011 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000011 /* main.swift */; };
+		AA000012 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000012 /* Provider.swift */; };
+		AA000013 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013 /* Device.swift */; };
+		AA000014 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014 /* Stream.swift */; };
+		AA000015 /* CoreMediaIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC000002 /* CoreMediaIO.framework */; };
+		AA000016 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC000003 /* IOSurface.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EE000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD000009 /* CameraExtension */;
+			remoteInfo = CameraExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EE000010 /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				AA000003 /* CameraExtension.appex in Embed System Extensions */,
+			);
+			name = "Embed System Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EE000040 /* Copy Rust Server Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Rust Server Binary";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Copy the Rust RTMP server binary into the app bundle\nSRC=\"${RTMP_SERVER_BINARY:-${PROJECT_DIR}/../../target/release/rtmp-vcam-app}\"\nDST=\"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_FOLDER_PATH}/rtmp-vcam-server\"\n\nif [ -f \"$SRC\" ]; then\n    echo \"Copying Rust binary from $SRC to $DST\"\n    cp \"$SRC\" \"$DST\"\nelse\n    echo \"warning: Rust binary not found at $SRC — build with 'make build-all' or 'cargo build --release' first\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXFileReference section */
+		/* Host App */
+		BB000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BB000005 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BB000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB000003 /* HostApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HostApp.entitlements; sourceTree = "<group>"; };
+
+		/* Extension */
+		BB000011 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		BB000012 /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		BB000013 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		BB000014 /* Stream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
+		BB000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB000016 /* Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Extension.entitlements; sourceTree = "<group>"; };
+
+		/* Frameworks */
+		CC000001 /* SystemExtensions.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemExtensions.framework; path = System/Library/Frameworks/SystemExtensions.framework; sourceTree = SDKROOT; };
+		CC000002 /* CoreMediaIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMediaIO.framework; path = System/Library/Frameworks/CoreMediaIO.framework; sourceTree = SDKROOT; };
+		CC000003 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
+
+		/* Products */
+		DD000001 /* RTMPVirtualCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RTMPVirtualCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD000010 /* CameraExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CameraExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		/* Host App Frameworks */
+		EE000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000002 /* SystemExtensions.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		/* Extension Frameworks */
+		EE000021 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000015 /* CoreMediaIO.framework in Frameworks */,
+				AA000016 /* IOSurface.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GG000001 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				GG000002 /* HostApp */,
+				GG000003 /* Extension */,
+				GG000004 /* Entitlements */,
+				GG000005 /* Frameworks */,
+				GG000006 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GG000002 /* HostApp */ = {
+			isa = PBXGroup;
+			children = (
+				BB000005 /* main.swift */,
+				BB000001 /* AppDelegate.swift */,
+				BB000002 /* Info.plist */,
+			);
+			path = HostApp;
+			sourceTree = "<group>";
+		};
+		GG000003 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				BB000011 /* main.swift */,
+				BB000012 /* Provider.swift */,
+				BB000013 /* Device.swift */,
+				BB000014 /* Stream.swift */,
+				BB000015 /* Info.plist */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		GG000004 /* Entitlements */ = {
+			isa = PBXGroup;
+			children = (
+				BB000003 /* HostApp.entitlements */,
+				BB000016 /* Extension.entitlements */,
+			);
+			path = Entitlements;
+			sourceTree = "<group>";
+		};
+		GG000005 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CC000001 /* SystemExtensions.framework */,
+				CC000002 /* CoreMediaIO.framework */,
+				CC000003 /* IOSurface.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		GG000006 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DD000001 /* RTMPVirtualCamera.app */,
+				DD000010 /* CameraExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DD000000 /* RTMPVirtualCamera */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = HH000001 /* Build configuration list for PBXNativeTarget "RTMPVirtualCamera" */;
+			buildPhases = (
+				EE000030 /* Sources */,
+				EE000020 /* Frameworks */,
+				EE000040 /* Copy Rust Server Binary */,
+				EE000010 /* Embed System Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EE000002 /* PBXTargetDependency */,
+			);
+			name = RTMPVirtualCamera;
+			productName = RTMPVirtualCamera;
+			productReference = DD000001 /* RTMPVirtualCamera.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DD000009 /* CameraExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = HH000002 /* Build configuration list for PBXNativeTarget "CameraExtension" */;
+			buildPhases = (
+				EE000031 /* Sources */,
+				EE000021 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CameraExtension;
+			productName = CameraExtension;
+			productReference = DD000010 /* CameraExtension.appex */;
+			productType = "com.apple.product-type.system-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FF000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = HH000000 /* Build configuration list for PBXProject "CameraExtension" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GG000001 /* Root */;
+			productRefGroup = GG000006 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DD000000 /* RTMPVirtualCamera */,
+				DD000009 /* CameraExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EE000030 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000005 /* main.swift in Sources */,
+				AA000001 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE000031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000011 /* main.swift in Sources */,
+				AA000012 /* Provider.swift in Sources */,
+				AA000013 /* Device.swift in Sources */,
+				AA000014 /* Stream.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EE000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD000009 /* CameraExtension */;
+			targetProxy = EE000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		/* Project Debug */
+		II000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		/* Project Release */
+		II000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		/* Host App Debug */
+		II000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Entitlements/HostApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				INFOPLIST_FILE = HostApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rtmpvcam.host;
+				PRODUCT_NAME = RTMPVirtualCamera;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		/* Host App Release */
+		II000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Entitlements/HostApp.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				INFOPLIST_FILE = HostApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rtmpvcam.host;
+				PRODUCT_NAME = RTMPVirtualCamera;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		/* Extension Debug */
+		II000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Entitlements/Extension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				INFOPLIST_FILE = Extension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rtmpvcam.host.camera-extension";
+				PRODUCT_NAME = "com.rtmpvcam.host.camera-extension";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Extension/shm_shim.h";
+				SWIFT_VERSION = 5.0;
+				SYSTEM_EXTENSION_API_VERSION = "1.0";
+			};
+			name = Debug;
+		};
+		/* Extension Release */
+		II000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Entitlements/Extension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = EQWMDN3W3D;
+				INFOPLIST_FILE = Extension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rtmpvcam.host.camera-extension";
+				PRODUCT_NAME = "com.rtmpvcam.host.camera-extension";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Extension/shm_shim.h";
+				SWIFT_VERSION = 5.0;
+				SYSTEM_EXTENSION_API_VERSION = "1.0";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		HH000000 /* Build configuration list for PBXProject "CameraExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				II000001 /* Debug */,
+				II000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		HH000001 /* Build configuration list for PBXNativeTarget "RTMPVirtualCamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				II000011 /* Debug */,
+				II000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		HH000002 /* Build configuration list for PBXNativeTarget "CameraExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				II000021 /* Debug */,
+				II000022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = FF000001 /* Project object */;
+}

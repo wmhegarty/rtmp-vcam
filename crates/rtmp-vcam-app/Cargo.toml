@@ -1,0 +1,13 @@
+[package]
+name = "rtmp-vcam-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rtmp-server = { path = "../rtmp-server" }
+video-pipeline = { path = "../video-pipeline" }
+tokio = { workspace = true }
+bytes = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+libc = "0.2"

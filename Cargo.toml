@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/rtmp-server",
+    "crates/video-pipeline",
+    "crates/rtmp-vcam-app",
+]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "net", "io-util", "macros", "sync", "time", "signal"] }
+bytes = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

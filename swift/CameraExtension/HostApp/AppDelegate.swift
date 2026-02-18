@@ -323,6 +323,39 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
 
     // MARK: - Server Management
 
+    /// Ensure /Library/Application Support/RTMPVirtualCamera/ exists.
+    /// This directory is owned by root, so we use AppleScript to prompt for admin privileges if needed.
+    private func ensureSharedMemoryDirectory() -> Bool {
+        let dir = "/Library/Application Support/RTMPVirtualCamera"
+        let fm = FileManager.default
+
+        if fm.fileExists(atPath: dir) {
+            return true
+        }
+
+        // Try creating without privileges first (works if user has admin write access)
+        do {
+            try fm.createDirectory(atPath: dir, withIntermediateDirectories: true)
+            return true
+        } catch {
+            logger.info("Cannot create \(dir) without privileges, requesting admin access")
+        }
+
+        // Use AppleScript to run mkdir with admin privileges (shows password prompt)
+        let script = "do shell script \"mkdir -p '\(dir)' && chmod 777 '\(dir)'\" with administrator privileges"
+        if let appleScript = NSAppleScript(source: script) {
+            var errorInfo: NSDictionary?
+            appleScript.executeAndReturnError(&errorInfo)
+            if let error = errorInfo {
+                logger.error("Failed to create shared memory directory: \(error)")
+                appendLog("ERROR: Could not create \(dir): \(error[NSAppleScript.errorMessage] ?? "unknown error")\n")
+                return false
+            }
+            return true
+        }
+        return false
+    }
+
     @objc private func toggleServer() {
         if isServerRunning {
             stopServer()
@@ -332,6 +365,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
     }
 
     private func startServer() {
+        // Ensure shared memory directory exists before launching server
+        if !ensureSharedMemoryDirectory() {
+            serverStatusLabel?.stringValue = "Error: cannot create shared memory directory"
+            serverStatusLabel?.textColor = .systemRed
+            return
+        }
+
         guard let binaryURL = Bundle.main.url(forAuxiliaryExecutable: "rtmp-vcam-server") else {
             appendLog("ERROR: rtmp-vcam-server not found in app bundle.\n")
             appendLog("Build with 'make build-all' to embed the Rust binary.\n")

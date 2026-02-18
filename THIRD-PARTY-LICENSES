@@ -1,0 +1,186 @@
+THIRD-PARTY LICENSES
+======================================================================
+
+RTMP Virtual Camera includes the following third-party software.
+Each is listed with its license type and copyright holders.
+
+======================================================================
+MIT License
+======================================================================
+
+The following crates are licensed under the MIT License:
+
+  bytes (Carl Lerche, Sean McArthur)
+  generic-array (Bartlomiej Kaminski, Aaron Trent)
+  matchers (Eliza Weisman)
+  mio (Carl Lerche, Thomas de Zeeuw, Tokio Contributors)
+  nu-ansi-term (ogham, Ryan Scheel, Josh Triplett, The Nushell Project Developers)
+  rml_amf0 (Matthew Shapiro)
+  rml_rtmp (Matthew Shapiro)
+  sharded-slab (Eliza Weisman)
+  tokio (Tokio Contributors)
+  tokio-macros (Tokio Contributors)
+  tracing (Eliza Weisman, Tokio Contributors)
+  tracing-attributes (Tokio Contributors, Eliza Weisman, David Barsky)
+  tracing-core (Tokio Contributors)
+  tracing-log (Tokio Contributors)
+  tracing-subscriber (Eliza Weisman, David Barsky, Tokio Contributors)
+  valuable (Tokio Contributors)
+
+The following crates are licensed under MIT OR Apache-2.0:
+
+  block-buffer (RustCrypto Developers)
+  cfg-if (Alex Crichton)
+  cpufeatures (RustCrypto Developers)
+  crypto-mac (RustCrypto Developers)
+  digest (RustCrypto Developers)
+  errno (Chris Wong, Dan Gohman)
+  getrandom (The Rand Project Developers)
+  hmac (RustCrypto Developers)
+  lazy_static (Marvin Lobel)
+  libc (The Rust Project Developers)
+  log (The Rust Project Developers)
+  once_cell (Aleksey Kladov)
+  opaque-debug (RustCrypto Developers)
+  pin-project-lite
+  ppv-lite86 (The CryptoCorrosion Contributors)
+  proc-macro2 (David Tolnay, Alex Crichton)
+  quote (David Tolnay)
+  rand (The Rand Project Developers, The Rust Project Developers)
+  rand_chacha (The Rand Project Developers, The Rust Project Developers)
+  rand_core (The Rand Project Developers, The Rust Project Developers)
+  regex-automata (The Rust Project Developers, Andrew Gallant)
+  regex-syntax (The Rust Project Developers, Andrew Gallant)
+  sha2 (RustCrypto Developers)
+  signal-hook-registry (Michal 'vorner' Vaner, Masaki Hara)
+  smallvec (The Servo Project Developers)
+  socket2 (Alex Crichton, Thomas de Zeeuw)
+  syn (David Tolnay)
+  thiserror (David Tolnay)
+  thread_local (Amanieu d'Antras)
+  typenum (Paho Lurie-Gregg, Andre Bogus)
+  version_check (Sergio Benitez)
+  windows-link (Microsoft)
+  windows-sys (Microsoft)
+  windows-targets (Microsoft)
+
+The following crates are licensed under MIT OR Unlicense:
+
+  aho-corasick (Andrew Gallant)
+  byteorder (Andrew Gallant)
+  memchr (Andrew Gallant)
+
+MIT License text:
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+======================================================================
+BSD-3-Clause License
+======================================================================
+
+The following crates are licensed under the BSD-3-Clause License:
+
+  subtle (Isis Lovecruft, Henry de Valence)
+
+  Copyright (c) 2016-2017 Isis Agora Lovecruft, Henry de Valence.
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are
+  met:
+
+  1. Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+======================================================================
+BSD-2-Clause License
+======================================================================
+
+The following crates are licensed under Apache-2.0 OR BSD-2-Clause OR MIT:
+
+  zerocopy (Joshua Liebow-Feeser, Jack Wrenn)
+
+======================================================================
+Unicode License
+======================================================================
+
+The following crates are licensed under (Apache-2.0 OR MIT) AND Unicode-3.0:
+
+  unicode-ident (David Tolnay)
+
+  UNICODE LICENSE V3
+
+  Copyright (c) 1991-2023 Unicode, Inc. All rights reserved.
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of the Unicode data files and any associated documentation (the
+  "Data Files") or Unicode software and any associated documentation
+  (the "Software") to deal in the Data Files or Software without
+  restriction, including without limitation the rights to use, copy,
+  modify, merge, publish, distribute, and/or sell copies of the Data
+  Files or Software, and to permit persons to whom the Data Files or
+  Software are furnished to do so, provided that either (a) this
+  copyright and permission notice appear with all copies of the Data
+  Files or Software, or (b) this copyright and permission notice appear
+  in associated Documentation.
+
+  THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF
+  ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+  WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT
+  HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR
+  ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+  OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THE DATA FILES OR
+  SOFTWARE.
+
+======================================================================
+Apple Frameworks
+======================================================================
+
+This software uses the following Apple frameworks via system-provided
+dynamic libraries. These are provided by macOS and are not bundled
+with the application:
+
+  CoreMediaIO, VideoToolbox, CoreMedia, CoreVideo, CoreFoundation,
+  IOSurface, SystemExtensions, Security
+
+Apple framework usage is governed by the macOS SDK license agreement.

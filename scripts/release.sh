@@ -96,6 +96,20 @@ if [ ! -f "${APP_PATH}/Contents/MacOS/rtmp-vcam-server" ]; then
   exit 1
 fi
 
+# 4b. Sign the embedded Rust binary with Developer ID + hardened runtime + timestamp
+echo "Signing Rust binary with Developer ID..."
+codesign --force --sign "Developer ID Application" \
+  --options runtime \
+  --timestamp \
+  "${APP_PATH}/Contents/MacOS/rtmp-vcam-server"
+
+# Re-sign the outer app to update the seal
+codesign --force --sign "Developer ID Application" \
+  --options runtime \
+  --timestamp \
+  --entitlements "$(pwd)/swift/CameraExtension/Entitlements/HostApp.entitlements" \
+  "${APP_PATH}"
+
 # Verify Developer ID signature
 SIGN_AUTHORITY=$(codesign -dvv "$APP_PATH" 2>&1 | grep "Authority=Developer ID" | head -1)
 if [ -z "$SIGN_AUTHORITY" ]; then

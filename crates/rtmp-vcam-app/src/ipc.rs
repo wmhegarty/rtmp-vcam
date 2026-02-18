@@ -40,6 +40,11 @@ impl SharedFrameBuffer {
     pub fn create() -> io::Result<Self> {
         let ring_path = PathBuf::from(RING_FILE_PATH);
 
+        // Ensure parent directory exists
+        if let Some(parent) = ring_path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+
         let c_path = CString::new(RING_FILE_PATH)
             .map_err(|_| io::Error::new(io::ErrorKind::InvalidInput, "path contains null"))?;
 

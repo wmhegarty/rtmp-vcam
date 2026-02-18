@@ -19,9 +19,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
     private var serverToggleButton: NSButton?
     private var logTextView: NSTextView?
 
+    // Stream key UI
+    private var streamKeyField: NSTextField?
+    private var rtmpURLField: NSTextField?
+
     // Process management
     private var serverProcess: Process?
     private var isServerRunning = false
+    private var intentionalStop = false
     private var crashTimestamps: [Date] = []
     private static let maxCrashRetries = 3
     private static let crashWindowSeconds: TimeInterval = 30
@@ -47,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
 
     private func setupWindow() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 500, height: 470),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 570),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -58,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
         let contentView = NSView(frame: window.contentView!.bounds)
         contentView.autoresizingMask = [.width, .height]
 
-        var y: CGFloat = 430
+        var y: CGFloat = 530
 
         // === Camera Extension Section ===
         y = addSectionHeader("Camera Extension", to: contentView, y: y)
@@ -117,6 +122,52 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
         serverToggleButton.bezelStyle = .rounded
         contentView.addSubview(serverToggleButton)
         self.serverToggleButton = serverToggleButton
+        y -= 40
+
+        // Stream key row
+        let keyLabel = NSTextField(labelWithString: "Stream Key:")
+        keyLabel.frame = NSRect(x: 20, y: y + 2, width: 80, height: 20)
+        keyLabel.font = .systemFont(ofSize: 13)
+        contentView.addSubview(keyLabel)
+
+        let streamKeyField = NSTextField(string: "")
+        streamKeyField.frame = NSRect(x: 104, y: y, width: 200, height: 24)
+        streamKeyField.font = .monospacedSystemFont(ofSize: 13, weight: .regular)
+        streamKeyField.isEditable = false
+        streamKeyField.isSelectable = true
+        streamKeyField.placeholderString = "None (accepting all)"
+        if let saved = UserDefaults.standard.string(forKey: "streamKey") {
+            streamKeyField.stringValue = saved
+        }
+        contentView.addSubview(streamKeyField)
+        self.streamKeyField = streamKeyField
+
+        let generateButton = NSButton(title: "Generate Key", target: self, action: #selector(generateStreamKey))
+        generateButton.frame = NSRect(x: 312, y: y - 2, width: 110, height: 28)
+        generateButton.bezelStyle = .rounded
+        contentView.addSubview(generateButton)
+
+        let clearButton = NSButton(title: "Clear", target: self, action: #selector(clearStreamKey))
+        clearButton.frame = NSRect(x: 428, y: y - 2, width: 52, height: 28)
+        clearButton.bezelStyle = .rounded
+        contentView.addSubview(clearButton)
+        y -= 32
+
+        // RTMP URL display
+        let urlLabel = NSTextField(labelWithString: "RTMP URL:")
+        urlLabel.frame = NSRect(x: 20, y: y + 2, width: 75, height: 20)
+        urlLabel.font = .systemFont(ofSize: 13)
+        contentView.addSubview(urlLabel)
+
+        let rtmpURLField = NSTextField(string: "")
+        rtmpURLField.frame = NSRect(x: 104, y: y, width: 376, height: 24)
+        rtmpURLField.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
+        rtmpURLField.isEditable = false
+        rtmpURLField.isSelectable = true
+        rtmpURLField.textColor = .secondaryLabelColor
+        contentView.addSubview(rtmpURLField)
+        self.rtmpURLField = rtmpURLField
+        updateRTMPURL()
         y -= 40
 
         // Log view
@@ -221,6 +272,34 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
         extensionStatusLabel?.stringValue = "Error: \(error.localizedDescription)"
     }
 
+    // MARK: - Stream Key
+
+    @objc private func generateStreamKey() {
+        let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let key = String((0..<16).map { _ in chars.randomElement()! })
+        streamKeyField?.stringValue = key
+        UserDefaults.standard.set(key, forKey: "streamKey")
+        updateRTMPURL()
+        logger.info("Generated new stream key")
+    }
+
+    @objc private func clearStreamKey() {
+        streamKeyField?.stringValue = ""
+        UserDefaults.standard.removeObject(forKey: "streamKey")
+        updateRTMPURL()
+        logger.info("Cleared stream key")
+    }
+
+    private func updateRTMPURL() {
+        let port = portField?.stringValue ?? "1935"
+        let key = streamKeyField?.stringValue ?? ""
+        if key.isEmpty {
+            rtmpURLField?.stringValue = "rtmp://localhost:\(port)/live/<any>"
+        } else {
+            rtmpURLField?.stringValue = "rtmp://localhost:\(port)/live/\(key)"
+        }
+    }
+
     // MARK: - Server Management
 
     @objc private func toggleServer() {
@@ -250,7 +329,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
 
         let process = Process()
         process.executableURL = binaryURL
-        process.arguments = ["--port", port, "--verbose"]
+        var args = ["--port", port, "--verbose"]
+        let streamKey = streamKeyField?.stringValue ?? ""
+        if !streamKey.isEmpty {
+            args += ["--stream-key", streamKey]
+        }
+        process.arguments = args
 
         let pipe = Pipe()
         process.standardOutput = pipe
@@ -273,9 +357,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
                 self.updateServerUI()
 
                 let status = proc.terminationStatus
-                let reason = proc.terminationReason
 
-                if reason == .uncaughtSignal || status != 0 {
+                if self.intentionalStop {
+                    self.intentionalStop = false
+                    self.appendLog("Server stopped.\n")
+                    self.serverStatusLabel?.stringValue = "Stopped"
+                    self.serverStatusLabel?.textColor = .secondaryLabelColor
+                } else if status != 0 {
                     self.appendLog("Server exited unexpectedly (status \(status))\n")
                     self.attemptRestart()
                 } else {
@@ -308,6 +396,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
             return
         }
 
+        intentionalStop = true
         appendLog("Stopping server...\n")
         process.terminate() // SIGTERM
 
@@ -360,6 +449,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
         portField?.isEditable = !isServerRunning
         portField?.isEnabled = !isServerRunning
     }
+
 
     // MARK: - Log View
 

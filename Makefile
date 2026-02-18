@@ -1,4 +1,4 @@
-.PHONY: build-rust build-swift build-all run clean test install
+.PHONY: build-rust build-swift build-all run clean test install release
 
 SWIFT_PROJECT = swift/CameraExtension/CameraExtension.xcodeproj
 SWIFT_SCHEME = CameraExtension
@@ -32,3 +32,11 @@ install: build-all
 	rm -rf /Applications/RTMPVirtualCamera.app
 	cp -R "$$(xcodebuild -project $(SWIFT_PROJECT) -scheme $(SWIFT_SCHEME) -configuration Release -showBuildSettings 2>/dev/null | grep ' BUILT_PRODUCTS_DIR' | sed 's/.*= //')/RTMPVirtualCamera.app" /Applications/
 	@echo "Installed. Launch /Applications/RTMPVirtualCamera.app to manage the extension and server."
+
+release:
+	@if [ -z "$(VERSION)" ]; then echo "Usage: make release VERSION=0.1.0"; exit 1; fi
+	./scripts/release.sh $(VERSION)
+
+dmg:
+	@if [ -z "$(VERSION)" ]; then echo "Usage: make dmg VERSION=0.1.0"; exit 1; fi
+	./scripts/release.sh $(VERSION) --dry

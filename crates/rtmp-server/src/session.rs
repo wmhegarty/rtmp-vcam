@@ -5,7 +5,7 @@ use rml_rtmp::sessions::{
 use std::io;
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
-use tracing::{debug, info, trace};
+use tracing::{debug, info, trace, warn};
 
 use crate::flv::{self, AvcDecoderConfig, VideoPacket};
 
@@ -22,11 +22,13 @@ pub trait VideoSink: Send + 'static {
 /// Manages one RTMP publishing session.
 pub struct RtmpSession {
     session: ServerSession,
+    allowed_key: Option<String>,
 }
 
 impl RtmpSession {
     /// Create a new RTMP session and send initial protocol messages to the client.
-    pub async fn new(stream: &mut TcpStream) -> io::Result<Self> {
+    /// If `allowed_key` is `Some`, only clients publishing with that stream key are accepted.
+    pub async fn new(stream: &mut TcpStream, allowed_key: Option<String>) -> io::Result<Self> {
         let config = ServerSessionConfig::new();
         let (session, initial_results) = ServerSession::new(config).map_err(|e| {
             io::Error::new(
@@ -44,7 +46,7 @@ impl RtmpSession {
         stream.flush().await?;
 
         debug!("RTMP session created, initial messages sent");
-        Ok(Self { session })
+        Ok(Self { session, allowed_key })
     }
 
     /// Process incoming RTMP data and dispatch events.
@@ -101,6 +103,15 @@ impl RtmpSession {
                 stream_key,
                 mode,
             } => {
+                if let Some(ref expected) = self.allowed_key {
+                    if stream_key != *expected {
+                        warn!(app_name, stream_key, "publish rejected: invalid stream key");
+                        return Err(io::Error::new(
+                            io::ErrorKind::PermissionDenied,
+                            "invalid stream key",
+                        ));
+                    }
+                }
                 info!(app_name, stream_key, ?mode, "publish requested, accepting");
                 let results = self.accept(request_id)?;
                 self.send_results(results, stream).await?;

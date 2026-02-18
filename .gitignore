@@ -35,3 +35,6 @@ swift/CameraExtension/*.xcodeproj/project.xcworkspace/xcuserdata/
 
 # Test artifacts
 test.mp4
+
+# Release artifacts
+*.dmg

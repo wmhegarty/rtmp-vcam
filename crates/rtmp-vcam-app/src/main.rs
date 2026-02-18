@@ -63,9 +63,10 @@ impl VideoSink for DecoderSink {
     }
 }
 
-fn parse_args() -> (SocketAddr, bool) {
+fn parse_args() -> (SocketAddr, bool, Option<String>) {
     let mut port: u16 = 1935;
     let mut verbose = false;
+    let mut stream_key: Option<String> = None;
 
     let args: Vec<String> = std::env::args().collect();
     let mut i = 1;
@@ -74,6 +75,12 @@ fn parse_args() -> (SocketAddr, bool) {
             "--port" | "-p" => {
                 if i + 1 < args.len() {
                     port = args[i + 1].parse().unwrap_or(1935);
+                    i += 1;
+                }
+            }
+            "--stream-key" | "-k" => {
+                if i + 1 < args.len() {
+                    stream_key = Some(args[i + 1].clone());
                     i += 1;
                 }
             }
@@ -86,9 +93,10 @@ fn parse_args() -> (SocketAddr, bool) {
                 println!("Usage: rtmp-vcam-app [OPTIONS]");
                 println!();
                 println!("Options:");
-                println!("  -p, --port <PORT>    RTMP listen port (default: 1935)");
-                println!("  -v, --verbose        Enable debug logging");
-                println!("  -h, --help           Show this help");
+                println!("  -p, --port <PORT>          RTMP listen port (default: 1935)");
+                println!("  -k, --stream-key <KEY>     Require stream key for publishing");
+                println!("  -v, --verbose              Enable debug logging");
+                println!("  -h, --help                 Show this help");
                 std::process::exit(0);
             }
             _ => {}
@@ -97,12 +105,12 @@ fn parse_args() -> (SocketAddr, bool) {
     }
 
     let addr: SocketAddr = format!("0.0.0.0:{port}").parse().unwrap();
-    (addr, verbose)
+    (addr, verbose, stream_key)
 }
 
 #[tokio::main]
 async fn main() {
-    let (addr, verbose) = parse_args();
+    let (addr, verbose, stream_key) = parse_args();
 
     // Initialize tracing
     let filter = if verbose {
@@ -110,7 +118,9 @@ async fn main() {
     } else {
         "rtmp_server=info,video_pipeline=info,rtmp_vcam_app=info"
     };
+    let use_ansi = std::io::IsTerminal::is_terminal(&std::io::stderr());
     tracing_subscriber::fmt()
+        .with_ansi(use_ansi)
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| filter.into()),
@@ -137,6 +147,19 @@ async fn main() {
         std::process::exit(0);
     });
 
+    // Exit if parent process dies (orphan protection)
+    tokio::spawn(async move {
+        let original_ppid = unsafe { libc::getppid() };
+        loop {
+            tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+            let ppid = unsafe { libc::getppid() };
+            if ppid != original_ppid {
+                tracing::info!("parent process died (ppid changed {original_ppid} -> {ppid}), exiting");
+                std::process::exit(0);
+            }
+        }
+    });
+
     info!(%addr, "starting RTMP server");
 
     let shm_clone = Arc::clone(&shm);
@@ -144,7 +167,7 @@ async fn main() {
     // Start the RTMP server
     if let Err(e) = rtmp_server::server::run(addr, move || {
         Box::new(DecoderSink::new(Arc::clone(&shm_clone)))
-    })
+    }, stream_key)
     .await
     {
         error!(%e, "RTMP server error");

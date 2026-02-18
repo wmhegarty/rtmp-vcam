@@ -3,28 +3,38 @@ use std::net::SocketAddr;
 
 use tokio::io::AsyncReadExt;
 use tokio::net::{TcpListener, TcpStream};
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 use crate::handshake::HandshakeState;
 use crate::session::{RtmpSession, VideoSink};
 
 /// Start the RTMP server on the given address.
 /// Calls `sink_factory` for each new connection to get a VideoSink.
-pub async fn run<F>(addr: SocketAddr, sink_factory: F) -> io::Result<()>
+/// If `stream_key` is `Some`, only clients publishing with that key are accepted.
+pub async fn run<F>(addr: SocketAddr, sink_factory: F, stream_key: Option<String>) -> io::Result<()>
 where
     F: Fn() -> Box<dyn VideoSink> + Send + Sync + 'static,
 {
     let listener = TcpListener::bind(addr).await?;
-    info!(%addr, "RTMP server listening");
+    if stream_key.is_some() {
+        info!(%addr, "RTMP server listening (stream key required)");
+    } else {
+        info!(%addr, "RTMP server listening (no stream key — accepting all)");
+    }
 
     loop {
         let (stream, peer_addr) = listener.accept().await?;
         info!(%peer_addr, "new connection");
 
         let mut sink = sink_factory();
+        let key = stream_key.clone();
         tokio::spawn(async move {
-            if let Err(e) = handle_connection(stream, peer_addr, &mut *sink).await {
-                error!(%peer_addr, %e, "connection error");
+            if let Err(e) = handle_connection(stream, peer_addr, &mut *sink, key).await {
+                if e.kind() == io::ErrorKind::PermissionDenied {
+                    warn!(%peer_addr, "connection rejected: {e}");
+                } else {
+                    error!(%peer_addr, %e, "connection error");
+                }
             }
             info!(%peer_addr, "connection closed");
         });
@@ -35,6 +45,7 @@ async fn handle_connection(
     mut stream: TcpStream,
     peer_addr: SocketAddr,
     sink: &mut dyn VideoSink,
+    stream_key: Option<String>,
 ) -> io::Result<()> {
     let mut buf = vec![0u8; 4096];
 
@@ -63,7 +74,7 @@ async fn handle_connection(
     };
 
     // Phase 2: RTMP Session
-    let mut session = RtmpSession::new(&mut stream).await?;
+    let mut session = RtmpSession::new(&mut stream, stream_key).await?;
 
     // Process any leftover bytes from the handshake
     if !remaining.is_empty() {

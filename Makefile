@@ -9,7 +9,7 @@ build-rust:
 
 build-swift: build-rust
 	RTMP_SERVER_BINARY=$(RUST_BINARY) xcodebuild -project $(SWIFT_PROJECT) \
-		-scheme $(SWIFT_SCHEME) -configuration Release build \
+		-scheme $(SWIFT_SCHEME) -configuration Debug build \
 		-allowProvisioningUpdates
 
 build-all: build-swift
@@ -30,7 +30,7 @@ clean:
 install: build-all
 	@echo "Installing to /Applications..."
 	rm -rf /Applications/RTMPVirtualCamera.app
-	cp -R "$$(xcodebuild -project $(SWIFT_PROJECT) -scheme $(SWIFT_SCHEME) -configuration Release -showBuildSettings 2>/dev/null | grep ' BUILT_PRODUCTS_DIR' | sed 's/.*= //')/RTMPVirtualCamera.app" /Applications/
+	cp -R "$$(xcodebuild -project $(SWIFT_PROJECT) -scheme $(SWIFT_SCHEME) -configuration Debug -showBuildSettings 2>/dev/null | grep ' BUILT_PRODUCTS_DIR' | sed 's/.*= //')/RTMPVirtualCamera.app" /Applications/
 	@echo "Installed. Launch /Applications/RTMPVirtualCamera.app to manage the extension and server."
 
 release:

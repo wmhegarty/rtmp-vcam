@@ -52,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
 
     private func setupWindow() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 500, height: 570),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 640),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -63,7 +63,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, OSSystemExtensionRequestDele
         let contentView = NSView(frame: window.contentView!.bounds)
         contentView.autoresizingMask = [.width, .height]
 
-        var y: CGFloat = 530
+        var y: CGFloat = 600
+
+        // === App icon (right side) + title header ===
+        let iconSize: CGFloat = 96
+        if let appIcon = NSImage(named: NSImage.applicationIconName) {
+            let iconView = NSImageView(frame: NSRect(x: 500 - iconSize - 20, y: y - iconSize + 24, width: iconSize, height: iconSize))
+            iconView.image = appIcon
+            iconView.imageScaling = .scaleProportionallyUpOrDown
+            contentView.addSubview(iconView)
+        }
+
+        let titleLabel = NSTextField(labelWithString: "RTMP Virtual Camera")
+        titleLabel.frame = NSRect(x: 20, y: y + 2, width: 340, height: 24)
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        contentView.addSubview(titleLabel)
+
+        let subtitleLabel = NSTextField(labelWithString: "Stream to a virtual camera via RTMP")
+        subtitleLabel.frame = NSRect(x: 20, y: y - 18, width: 340, height: 18)
+        subtitleLabel.font = .systemFont(ofSize: 12)
+        subtitleLabel.textColor = .secondaryLabelColor
+        contentView.addSubview(subtitleLabel)
+        y -= 64
 
         // === Camera Extension Section ===
         y = addSectionHeader("Camera Extension", to: contentView, y: y)

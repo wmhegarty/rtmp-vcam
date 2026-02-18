@@ -2,6 +2,51 @@
 
 Receive RTMP video streams (e.g., from OBS, MeldStudio, or ffmpeg) and expose them as a native macOS virtual camera. Any app that uses a webcam — FaceTime, Zoom, Google Meet, QuickTime — can select "RTMP Virtual Camera" as a camera source.
 
+## Installation
+
+1. Download the latest `.dmg` from [Releases](https://github.com/wmhegarty/rtmp-vcam/releases)
+2. Open the DMG and drag **RTMPVirtualCamera** to the **Applications** folder
+3. Launch **RTMPVirtualCamera** from `/Applications`
+
+> **First launch:** macOS may show a security prompt. If so, go to **System Settings → Privacy & Security** and click **Open Anyway**.
+
+## Setup (one-time)
+
+1. In the app, click **Install Extension**
+2. macOS will ask you to approve the system extension — go to **System Settings → Privacy & Security** and allow it
+3. The camera extension is now installed and will persist across reboots
+
+## Usage
+
+1. Click **Start Server** (default port 1935)
+2. **(Optional)** Click **Generate Key** to require a stream key for authentication
+3. Point your RTMP source at the URL shown in the app:
+
+**From OBS / MeldStudio:**
+- Server: `rtmp://localhost/live`
+- Stream Key: the key shown in the app (or anything if no key is set)
+
+**From ffmpeg:**
+```bash
+# Test pattern
+ffmpeg -f lavfi -i testsrc=duration=3600:size=1920x1080:rate=30 \
+  -pix_fmt yuv420p -c:v libx264 -b:v 2M -f flv rtmp://localhost/live/YOUR_STREAM_KEY
+
+# Stream a file
+ffmpeg -re -i video.mp4 -c:v libx264 -pix_fmt yuv420p \
+  -f flv rtmp://localhost/live/YOUR_STREAM_KEY
+```
+
+4. Open **FaceTime**, **Zoom**, **Google Meet**, or any video app and select **RTMP Virtual Camera** as your camera
+
+## Uninstalling
+
+1. Launch the app and click **Uninstall Extension**
+2. Approve the removal in System Settings if prompted
+3. Delete `RTMPVirtualCamera.app` from `/Applications`
+
+---
+
 ## How It Works
 
 ```
@@ -18,26 +63,12 @@ Three-layer architecture:
 
 IPC uses a double-buffered memory-mapped file at `/Library/Application Support/RTMPVirtualCamera/rtmp_vcam_ring` (~6.2MB: 64-byte header + 2× 1920×1080 NV12 frames).
 
-## Requirements
+## Requirements (building from source)
 
 - macOS 12.3+
-- Xcode 15+ (for building from source)
+- Xcode 15+
 - Rust toolchain (`rustup`)
 - An Apple Developer account (code signing required for system extensions)
-
-## Quick Start (from DMG)
-
-1. Download the latest `.dmg` from [Releases](https://github.com/wmhegarty/rtmp-vcam/releases)
-2. Drag `RTMPVirtualCamera.app` to `/Applications`
-3. Launch the app
-4. Click **Install Extension** and approve in System Settings → Privacy & Security
-5. Click **Start Server**
-6. Send video:
-   ```bash
-   ffmpeg -f lavfi -i testsrc=duration=3600:size=1920x1080:rate=30 \
-     -pix_fmt yuv420p -c:v libx264 -b:v 2M -f flv rtmp://localhost/live/test
-   ```
-7. Open FaceTime/Zoom → select **RTMP Virtual Camera**
 
 ## Build from Source
 
@@ -53,43 +84,6 @@ make test
 ```
 
 The Rust RTMP server binary is embedded inside the app bundle and managed from the UI — no need to run it separately.
-
-## Usage
-
-1. **Launch** `/Applications/RTMPVirtualCamera.app`
-2. **Install the camera extension** — click "Install Extension" and approve in System Settings → Privacy & Security
-3. **Start the RTMP server** — click "Start Server" (default port 1935)
-4. **(Optional) Generate a stream key** — click "Generate Key" to require authentication. The RTMP URL with the key is shown in the app for easy copying.
-5. **Send video** from any RTMP source:
-
-```bash
-# ffmpeg test pattern
-ffmpeg -f lavfi -i testsrc=duration=3600:size=1920x1080:rate=30 \
-  -pix_fmt yuv420p -c:v libx264 -b:v 2M -f flv rtmp://localhost/live/YOUR_STREAM_KEY
-
-# Or configure OBS/MeldStudio with:
-#   Server: rtmp://localhost/live
-#   Stream Key: <key from the app>
-```
-
-6. **Select the camera** — open FaceTime, Zoom, or any video app and choose "RTMP Virtual Camera"
-
-## Stream Key Authentication
-
-The server supports optional stream key authentication. When a key is configured, only RTMP clients that publish with the correct stream key are accepted — others are disconnected immediately.
-
-**From the app UI:**
-1. Click "Generate Key" to create a random 16-character key
-2. The key persists across app restarts (stored in UserDefaults)
-3. The full RTMP URL with the key is shown for easy copy/paste
-4. Click "Clear" to disable authentication (accept all connections)
-
-**From the CLI:**
-```bash
-rtmp-vcam-app --stream-key MY_SECRET_KEY
-```
-
-When no stream key is configured, the server accepts all connections (backwards-compatible).
 
 ## CLI Usage
 
